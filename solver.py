@@ -1,4 +1,4 @@
-class Parser:
+class Solver:
     def __init__(self, string):
         self.string = string
         self.index = 0

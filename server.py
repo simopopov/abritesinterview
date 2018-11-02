@@ -1,35 +1,30 @@
-import socket
-import threading
+import socketserver
+from solver import Solver
 
-from worker import Worker
+class ThreadedTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
 
-class Server:
-
-    def __init__(self, host_name, port_number):
-        self.host_name = host_name
-        self.port_number = port_number
-        self.sock = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
-        self.host_port_pair = (self.host_name, self.port_number)
-
-    def start(self):
-        
-            self.sock.bind(self.host_port_pair)
-            self.sock.listen(10)
-            while True:
-                try:
-                    client_sock = None
-                    client_sock, address = self.sock.accept()
-                    worker = Worker(client_sock)
-                    worker.start()
-                except KeyboardInterrupt:
-                    if client_sock:
-                        client_sock.close()
-                    self.sock.close()
-                    return
-                    
-        
+class Server(socketserver.BaseRequestHandler):
+    def handle(self):
+        while True:
+            self.data = self.request.recv(1024).strip().decode()
+            if not self.data:
+                break
+            try:
+                p = Solver(self.data)
+                value = "{} = {}".format(self.data, p.getValue())
+            except:
+                value = "Error in parsing your expression"
+            self.request.sendall(value.encode())
 
 
-if __name__ == '__main__':
-    client = Server('127.0.0.1', 1234)
-    client.start()
+if __name__ == "__main__":
+    HOST, PORT = "localhost", 1234
+
+    # Create the server, binding to localhost on port 9999
+    server = ThreadedTCPServer((HOST, PORT), Server)
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("The server is stopped")
+        server.server_close()

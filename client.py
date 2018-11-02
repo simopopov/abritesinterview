@@ -11,7 +11,7 @@ class Client:
         self.sock.connect(self.host_port_pair)
         while True:
             try:
-                print ("TYPE A MESSAGE FOR SERVER ==> ")
+                print ("TYPE A MESSAGE FOR SERVER (or exit) ==> ")
                 msg_for_server = input()
                 if not msg_for_server:
                     break
