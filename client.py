@@ -35,5 +35,5 @@ class Client:
 
 
 if __name__ == '__main__':
-    client = Client('127.0.0.1', 1234)
+    client = Client('127.0.0.1', 1345)
     client.start()

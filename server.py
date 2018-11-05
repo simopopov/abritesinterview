@@ -12,16 +12,14 @@ class Server(socketserver.BaseRequestHandler):
                 break
             try:
                 p = Solver(self.data)
-                value = "{} = {}".format(self.data, p.getValue())
+                value = str(p.getValue())
             except:
                 value = "Error in parsing your expression"
             self.request.sendall(value.encode())
 
 
 if __name__ == "__main__":
-    HOST, PORT = "localhost", 1234
-
-    # Create the server, binding to localhost on port 9999
+    HOST, PORT = "localhost", 1345
     server = ThreadedTCPServer((HOST, PORT), Server)
     try:
         server.serve_forever()
